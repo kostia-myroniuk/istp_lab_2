@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>eshop</title>
+</head>
+<body>
+    <div class="container">
+        <div class="jumbtron">
+            <h1 class="display-4 text-center">eshop warehouse</h1>
+            <hr />
+            <div class="row mb-5">
+                <div class="col">
+                    <h3>Add manufacturer</h3>
+                    <form action="javascript:void(0);" method="POST" onsubmit="addManufacturer()">
+                        <input type="text" id="add-name" placeholder="Name" />
+                        <input type="text" id="add-address" placeholder="Address" />
+                        <input type="submit" value="Add" class="btn btn-primary" />
+                    </form>
+                </div>
+                <div class="col">
+                    <div id="editManufacturer">
+                        <h3>Edit</h3>
+                        <form action="javascript:void(0);" onsubmit="updateManufacturer()">
+                            <input type="hidden" id="edit-id" />
+                            <input type="text" id="edit-name" />
+                            <input type="text" id="edit-address" />
+                            <input type="submit" value="Save" class="btn btn-success" />
+                            <a onclick="closeInput()" aria-label="Close">&#10006;</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <p id="counter"></p>
+            <div class="mb-3"></div>
+            <table class="table">
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                </tr>
+                <tbody id="manufacturers"></tbody>
+            </table>
+            <script src="js/lab2.js" asp-append-version="true"></script>
+            <script type="text/javascript">
+                getManufacturers();
+            </script>
+        </div>
+    </div>
+</body>
+</html>
