@@ -51,6 +51,10 @@ namespace eshop.Controllers
             {
                 return BadRequest();
             }
+            if (manufacturer.Name == "")
+            {
+                return BadRequest("Manufacturer name can't be empty!");
+            }
             if (_context.Manufacturers.Any(m => m.Id != id && m.Name == manufacturer.Name))
             {
                 return BadRequest("Manufacturer name is already taken!");
@@ -86,6 +90,10 @@ namespace eshop.Controllers
             if (_context.Manufacturers.Any(m => m.Name == manufacturer.Name))
             {
                 return BadRequest("Manufacturer name is already taken!");
+            }
+            if (manufacturer.Name == "")
+            {
+                return BadRequest("Manufacturer name can't be empty!");
             }
 
             _context.Manufacturers.Add(manufacturer);

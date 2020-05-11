@@ -15,7 +15,7 @@ namespace eshop.Models
         public EShopContext(DbContextOptions<EShopContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
 
     }
