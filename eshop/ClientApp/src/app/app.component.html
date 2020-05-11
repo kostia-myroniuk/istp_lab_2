@@ -1,0 +1,248 @@
+﻿<div class="container">
+    <div class="jumbtron">
+        <h1 class="display-4 text-center">Warehouse</h1>
+        <hr />
+
+        <!-- Items / Categories buttons -->
+        <p class="btn-group" style="width:100%;">
+            <button *ngIf="itemMode" class="btn btn-primary">Items</button>
+            <button *ngIf="!itemMode" (click)="turnItemMode()" class="btn btn-outline-primary">Items</button>
+
+            <button *ngIf="!itemMode" class="btn btn-primary">Manufacturers</button>
+            <button *ngIf="itemMode" (click)="turnManufacturerMode()" class="btn btn-outline-primary">Manufacturers</button>
+        </p>
+
+        <!-- Item mode  -->
+        <ng-template [ngIf]="itemMode">
+            <div>
+                <!-- Categories -->
+                <!-- Buttons list -->
+                <div class="btn-group mb-3">
+                    <button *ngIf="!selectedCategory?.id" class="btn btn-secondary">All</button>
+                    <button *ngIf="selectedCategory?.id" (click)="unselectCategory()" class="btn btn-outline-secondary">All</button>
+                    <ng-template ngFor let-c [ngForOf]="categories">
+                        <button *ngIf="selectedCategory?.id == c.id" class="btn btn-secondary">{{c?.name}}</button>
+                        <button *ngIf="selectedCategory?.id != c.id" (click)="selectCategory(c)" class="btn btn-outline-secondary">{{c?.name}}</button>
+                    </ng-template>
+                </div>
+                
+                <!-- Add/Edit/Delete buttons -->
+                <div class="btn-group mb-3 ml-3">
+                    <button (click)="categoryAdd()" class="btn btn-secondary"><i class="fa fa-plus"></i></button>
+                    <button *ngIf="selectedCategory?.id" (click)="categoryEdit(selectedCategory)" class="btn btn-secondary"><i class="fa fa-edit"></i></button>
+                    <button *ngIf="selectedCategory?.id" (click)="categoryDelete(selectedCategory)" class="btn btn-secondary"><i class="fa fa-trash"></i></button>
+                </div>
+
+                <!-- Add category -->
+                <ng-template [ngIf]="!categoryTableMode" [ngIfElse]="categoryInfo">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" [(ngModel)]="category.name" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Info</label>
+                        <input type="text" [(ngModel)]="category.info" class="form-control" />
+                    </div>
+                    <p>
+                        <button class="btn btn-success mr-2" (click)="categorySave()"><i class="fa fa-check mr-2"></i>Add</button>
+                        <button class="btn btn-danger" (click)="categoryCancel()"><i class="fa fa-times mr-2"></i>Cancel</button>
+                    </p>
+                </ng-template>
+
+                <!-- Info -->
+                <ng-template #categoryInfo>
+                    <ng-template [ngIf]="selectedCategory?.id">
+                        <!-- Edit category -->
+                        <ng-template [ngIf]="selectedCategory.id == category?.id" [ngIfElse]="categoryInfoText">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" [(ngModel)]="category.name" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label>Info</label>
+                                <input type="text" [(ngModel)]="category.info" class="form-control" />
+                            </div>
+                            <p>
+                                <button class="btn btn-success mr-2" (click)="categorySave()"><i class="fa fa-check mr-2"></i>Save</button>
+                                <button class="btn btn-danger" (click)="categoryCancel()"><i class="fa fa-times mr-2"></i>Cancel</button>
+                            </p>
+                        </ng-template>
+
+                        <ng-template #categoryInfoText>
+                            <p *ngIf="selectedCategory?.id"><span style="font-weight:bold;">About this category: </span>{{selectedCategory?.info}}</p>
+                        </ng-template>
+                    </ng-template>
+                </ng-template>
+
+                <!-- Add item button -->
+                <div><button class="btn btn-secondary mb-3" (click)="itemAdd()">Add item</button></div>
+            </div>
+
+            <!-- Create item -->
+            <ng-template #itemCreate>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" [(ngModel)]="item.name" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" [(ngModel)]="item.amount" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="number" [(ngModel)]="item.price" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Manufacturer</label>
+                    <select [(ngModel)]="item.manufacturerId" class="form-control">
+                        <option *ngFor="let mm of manufacturers" [ngValue]="mm?.id">
+                            {{mm?.name}}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select [(ngModel)]="item.categoryId" class="form-control">
+                        <option *ngFor="let cc of categories" [ngValue]="cc?.id">
+                            {{cc?.name}}
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <button class="btn btn-success mr-2" (click)="itemSave()"><i class="fa fa-check mr-2"></i>Add</button>
+                    <button class="btn btn-danger" (click)="itemCancel()"><i class="fa fa-times mr-2"></i>Cancel</button>
+                </div>
+            </ng-template>
+            
+            <!-- Items table -->
+            <table *ngIf="itemTableMode;else itemCreate" class="table table-hover">
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Price</td>
+                        <td>Amount</td>
+                        <td>Category</td>
+                        <td>Manufacturer</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let i of items">
+                        <ng-template [ngIf]="selectedCategory?.id == i.categoryId || !selectedCategory?.id || item?.id == i.id">
+                            <ng-template [ngIf]="item?.id != i.id">
+                                <td>{{i?.name}}</td>
+                                <td>{{i?.price}} ₴</td>
+                                <td>{{i?.amount}}</td>
+                                <td>{{findItemCategory(i)}}</td>
+                                <td>{{findItemManufacturer(i)}}</td>
+                                <td>
+                                    <div class="btn-group float-right">
+                                        <button class="btn btn-secondary" (click)="itemEdit(i)"><i class="fa fa-edit"></i></button>
+                                        <button class="btn btn-danger" (click)="itemDelete(i)"><i class="fa fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </ng-template>
+
+                            <!-- Edited item -->
+                            <ng-template [ngIf]="item?.id == i.id">
+                                <td>
+                                    <input type="text" [(ngModel)]="item.name" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="number" [(ngModel)]="item.price" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="number" [(ngModel)]="item.amount" class="form-control" />
+                                </td>
+                                <td>
+                                    <select [(ngModel)]="item.categoryId" class="form-control">
+                                        <option *ngFor="let ccc of categories" [ngValue]="ccc?.id">
+                                            {{ccc?.name}}
+                                        </option>
+                                    </select>
+
+                                </td>
+                                <td>
+                                    <select [(ngModel)]="item.manufacturerId" class="form-control">
+                                        <option *ngFor="let mmm of manufacturers" [ngValue]="mmm?.id">
+                                            {{mmm?.name}}
+                                        </option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <div class="btn-group float-right">
+                                        <button class="btn btn-success" (click)="itemSave()"><i class="fa fa-check"></i></button>
+                                        <button class="btn btn-warning" (click)="itemCancel()"><i class="fa fa-times"></i></button>
+                                    </div>
+                                </td>
+                            </ng-template>
+                        </ng-template>
+                    </tr>
+                </tbody>
+            </table>
+
+        </ng-template>
+
+        <!-- Manufacturers -->
+        <ng-template [ngIf]="!itemMode">
+            <button class="btn btn-secondary mb-3" (click)="add()">Add manufacturer</button>
+
+            <!-- Create manufacturer -->
+            <ng-template #create>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" [(ngModel)]="manufacturer.name" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" [(ngModel)]="manufacturer.address" class="form-control" />
+                </div>
+                <div>
+                    <button class="btn btn-success mr-2" (click)="save()"><i class="fa fa-check mr-2"></i>Add</button>
+                    <button class="btn btn-danger" (click)="cancel()"><i class="fa fa-times mr-2"></i>Cancel</button>
+                </div>
+            </ng-template>
+
+            <!-- Manufacturers table -->
+            <table *ngIf="tableMode;else create" class="table table-hover">
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Address</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let p of manufacturers">
+                        <ng-template [ngIf]="manufacturer?.id != p.id" [ngIfElse]="edit">
+                            <td>{{p?.name}}</td>
+                            <td>{{p?.address}}</td>
+                            <td>
+                                <div class="btn-group float-right">
+                                    <button class="btn btn-secondary" (click)="editManufacturer(p)"><i class="fa fa-edit"></i></button>
+                                    <button class="btn btn-danger" (click)="delete(p)"><i class="fa fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </ng-template>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Edited manufacturer -->
+            <ng-template #edit>
+                <td>
+                    <input type="text" [(ngModel)]="manufacturer.name" class="form-control" />
+                </td>
+                <td>
+                    <input type="text" [(ngModel)]="manufacturer.address" class="form-control" />
+                </td>
+                <td>
+                    <div class="btn-group float-right">
+                        <button class="btn btn-success" (click)="save()"><i class="fa fa-check"></i></button>
+                        <button class="btn btn-warning" (click)="cancel()"><i class="fa fa-times"></i></button>
+                    </div>
+                </td>
+            </ng-template>
+        </ng-template>
+    </div>
+</div>

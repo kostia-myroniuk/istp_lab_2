@@ -51,6 +51,10 @@ namespace eshop.Controllers
             {
                 return BadRequest();
             }
+            if (_context.Manufacturers.Any(m => m.Id != id && m.Name == manufacturer.Name))
+            {
+                return BadRequest("Manufacturer name is already taken!");
+            }
 
             _context.Entry(manufacturer).State = EntityState.Modified;
 
@@ -79,6 +83,11 @@ namespace eshop.Controllers
         [HttpPost]
         public async Task<ActionResult<Manufacturer>> PostManufacturer(Manufacturer manufacturer)
         {
+            if (_context.Manufacturers.Any(m => m.Name == manufacturer.Name))
+            {
+                return BadRequest("Manufacturer name is already taken!");
+            }
+
             _context.Manufacturers.Add(manufacturer);
             await _context.SaveChangesAsync();
 

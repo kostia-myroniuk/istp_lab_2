@@ -52,6 +52,11 @@ namespace eshop.Controllers
                 return BadRequest();
             }
 
+            if (_context.Items.Any(i => i.Id != id && i.Name == item.Name))
+            {
+                return BadRequest("Item name is already taken!");
+            }
+
             _context.Entry(item).State = EntityState.Modified;
 
             try
@@ -79,6 +84,11 @@ namespace eshop.Controllers
         [HttpPost]
         public async Task<ActionResult<Item>> PostItem(Item item)
         {
+            if (_context.Items.Any(i => i.Name == item.Name))
+            {
+                return BadRequest("Item name is already taken!");
+            }
+
             _context.Items.Add(item);
             await _context.SaveChangesAsync();
 
